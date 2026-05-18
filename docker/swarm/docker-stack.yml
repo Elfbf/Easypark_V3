@@ -1,5 +1,4 @@
 version: "3.8"
-
 services:
   laravel:
     image: 0raffi0/easypark:latest
@@ -16,7 +15,6 @@ services:
     volumes:
       - /var/www/easypark/.env:/var/www/html/.env
       - storage_data:/var/www/html/storage
-
   nginx:
     image: nginx:alpine
     ports:
@@ -29,7 +27,6 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-
   mysql:
     image: mysql:8.0
     environment:
@@ -46,7 +43,6 @@ services:
       placement:
         constraints:
           - node.role == manager
-
   prometheus:
     image: prom/prometheus:latest
     ports:
@@ -61,7 +57,15 @@ services:
       placement:
         constraints:
           - node.role == manager
-
+  node-exporter:
+    image: prom/node-exporter:latest
+    networks:
+      - easypark_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
   grafana:
     image: grafana/grafana:latest
     ports:
@@ -77,11 +81,9 @@ services:
       placement:
         constraints:
           - node.role == manager
-
 networks:
   easypark_network:
     driver: overlay
-
 volumes:
   mysql_data:
   storage_data:
