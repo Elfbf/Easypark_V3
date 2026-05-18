@@ -13,9 +13,8 @@ services:
         parallelism: 1
         delay: 10s
         order: start-first
-    env_file:
-      - /var/www/easypark/.env
     volumes:
+      - /var/www/easypark/.env:/var/www/html/.env
       - storage_data:/var/www/html/storage
 
   nginx:
