@@ -21,7 +21,6 @@
         .subheader-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:#181D35;}
         .subheader-sub{font-size:.95rem;color:#8A93AE;}
 
-        /* ── Countdown bar — hanya muncul kalau ?from=kiosk ── */
         .cd-bar{
             display:none;
             flex-shrink:0;
@@ -50,15 +49,12 @@
         }
         .cd-skip:hover{color:#fff;}
 
-        .main{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:28px 48px;overflow:hidden;}
+        .main{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;padding:28px 48px;overflow:hidden;}
         .area-card{background:#fff;border:2px solid #EBEEF5;border-radius:24px;display:flex;flex-direction:column;justify-content:space-between;padding:36px 40px;box-shadow:0 4px 24px rgba(26,75,173,.07);}
-        .area-type{font-size:14px;font-weight:700;padding:6px 16px;border-radius:100px;display:inline-block;margin-bottom:16px;}
-        .type-mobil{background:#E8F0FB;color:#1A4BAD;border:1.5px solid #C0D3F5;}
-        .type-motor{background:#ECFDF3;color:#027A48;border:1.5px solid #6CE9A6;}
-        .area-name{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;color:#181D35;line-height:1.1;margin-bottom:8px;}
+        .area-name{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:#181D35;line-height:1.1;margin-bottom:8px;}
         .area-code{font-size:1rem;color:#8A93AE;margin-bottom:32px;}
         .slot-info{display:flex;align-items:flex-end;gap:16px;margin-bottom:28px;}
-        .slot-num{font-family:'Syne',sans-serif;font-size:7rem;font-weight:800;line-height:1;}
+        .slot-num{font-family:'Syne',sans-serif;font-size:5.5rem;font-weight:800;line-height:1;}
         .num-ok{color:#027A48;} .num-warn{color:#92400E;} .num-full{color:#DC2626;}
         .slot-meta{padding-bottom:10px;}
         .slot-total{font-size:1.4rem;color:#B0B8CC;font-weight:600;display:block;margin-bottom:4px;}
@@ -88,11 +84,10 @@
     </div>
 
     <div class="subheader">
-        <span class="subheader-title">Top 2 area parkir paling sepi hari ini</span>
+        <span class="subheader-title">Area parkir tersedia hari ini</span>
         <span class="subheader-sub">Data diperbarui setiap kali halaman dimuat</span>
     </div>
 
-    {{-- Countdown bar — hanya aktif kalau ?from=kiosk --}}
     <div class="cd-bar" id="cdBar">
         <div class="cd-circle" id="cdNum">5</div>
         <span class="cd-label">Kembali ke halaman utama otomatis...</span>
@@ -108,13 +103,9 @@
             $barClass   = $pct > 50 ? 'bar-ok'   : ($pct > 0 ? 'bar-warn'   : 'bar-full');
             $badgeClass = $pct > 50 ? 'badge-ok' : ($pct > 0 ? 'badge-warn' : 'badge-full');
             $badgeText  = $pct > 50 ? 'Sepi'     : ($pct > 0 ? 'Agak Ramai' : 'Penuh');
-            $isMotor    = $area->parkingSlots->first()?->vehicle_type_id === 1;
-            $typeLabel  = $isMotor ? 'Motor' : 'Mobil';
-            $typeClass  = $isMotor ? 'type-motor' : 'type-mobil';
         @endphp
         <div class="area-card">
             <div>
-                <div class="area-type {{ $typeClass }}">{{ $typeLabel }}</div>
                 <div class="area-name">{{ $area->name }}</div>
                 <div class="area-code">{{ $area->code }} · Kapasitas {{ $area->capacity }} slot</div>
                 <div class="slot-info">
@@ -137,7 +128,6 @@
     </div>
 
     <script>
-        // ── Clock ──────────────────────────────────────────────
         function tick(){
             const now = new Date();
             document.getElementById('clock').textContent =
@@ -146,7 +136,6 @@
         }
         tick(); setInterval(tick, 1000);
 
-        // ── Countdown — aktif hanya kalau ?from=kiosk ──────────
         const fromKiosk = new URLSearchParams(window.location.search).get('from') === 'kiosk';
 
         function goUser(){ window.location.href = '{{ url("/user") }}'; }
@@ -160,7 +149,6 @@
 
             bar.classList.add('visible');
 
-            // Susutkan fill mulai detik pertama
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     fillEl.style.width = ((TOTAL - 1) / TOTAL * 100) + '%';

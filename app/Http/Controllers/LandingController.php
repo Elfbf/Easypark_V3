@@ -17,32 +17,16 @@ class LandingController extends Controller
 
     public function user(): View
     {
-        $recommendations = collect();
-
-        $mobil = ParkingArea::with('parkingSlots')
-            ->withCount([
-                'parkingSlots',
-                'parkingSlots as available_count' => fn($q) => $q->where('status', 'available'),
-            ])
-            ->whereHas('parkingSlots', fn($q) => $q->where('vehicle_type_id', 2))
-            ->where('is_active', true)
-            ->orderByDesc('available_count')
-            ->first();
-
-        $motor = ParkingArea::with('parkingSlots')
-            ->withCount([
-                'parkingSlots',
-                'parkingSlots as available_count' => fn($q) => $q->where('status', 'available'),
-            ])
-            ->whereHas('parkingSlots', fn($q) => $q->where('vehicle_type_id', 1))
-            ->where('is_active', true)
-            ->orderByDesc('available_count')
-            ->first();
-
-        if ($mobil) $recommendations->push($mobil);
-        if ($motor) $recommendations->push($motor);
+        $recommendations = $this->getRecommendations();
 
         return view('landing.user', compact('recommendations'));
+    }
+
+    public function cekSlot(): View
+    {
+        $recommendations = $this->getRecommendations();
+
+        return view('landing.cek-slot', compact('recommendations'));
     }
 
     /**
@@ -64,44 +48,11 @@ class LandingController extends Controller
             ]);
         }
 
-        // Kalau keluar → hapus flag tapi tidak trigger redirect
         if ($flag && $flag['aksi'] === 'keluar') {
             Cache::forget('kiosk_just_confirmed');
         }
 
-        return response()->json([
-            'triggered' => false
-        ]);
-    }
-
-    public function cekSlot(): View
-    {
-        $recommendations = collect();
-
-        $mobil = ParkingArea::with('parkingSlots')
-            ->withCount([
-                'parkingSlots',
-                'parkingSlots as available_count' => fn($q) => $q->where('status', 'available'),
-            ])
-            ->whereHas('parkingSlots', fn($q) => $q->where('vehicle_type_id', 2))
-            ->where('is_active', true)
-            ->orderByDesc('available_count')
-            ->first();
-
-        $motor = ParkingArea::with('parkingSlots')
-            ->withCount([
-                'parkingSlots',
-                'parkingSlots as available_count' => fn($q) => $q->where('status', 'available'),
-            ])
-            ->whereHas('parkingSlots', fn($q) => $q->where('vehicle_type_id', 1))
-            ->where('is_active', true)
-            ->orderByDesc('available_count')
-            ->first();
-
-        if ($mobil) $recommendations->push($mobil);
-        if ($motor) $recommendations->push($motor);
-
-        return view('landing.cek-slot', compact('recommendations'));
+        return response()->json(['triggered' => false]);
     }
 
     public function info(): View
@@ -109,5 +60,21 @@ class LandingController extends Controller
         $areas = ParkingArea::where('is_active', true)->get();
 
         return view('landing.info', compact('areas'));
+    }
+
+    // -------------------------------------------------------------------------
+    // Private Helpers
+    // -------------------------------------------------------------------------
+
+    private function getRecommendations(): \Illuminate\Support\Collection
+    {
+        return ParkingArea::withCount([
+            'parkingRecords as parked_count' => fn($q) => $q->where('status', 'parked'),
+        ])
+            ->where('is_active', true)
+            ->get()
+            ->each(fn($area) => $area->available_count = max(0, $area->capacity - $area->parked_count))
+            ->sortByDesc('available_count')
+            ->values();
     }
 }
