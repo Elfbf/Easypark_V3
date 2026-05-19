@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\VehicleController;
 use App\Http\Controllers\Api\ScanPlatController;
 use App\Http\Controllers\Api\ParkingRecordController;
 use App\Http\Controllers\Api\OtpController;
+use App\Http\Controllers\Api\FaceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/send-otp', [OtpController::class, 'sendOtp']);
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
 Route::post('/reset-password', [OtpController::class, 'resetPassword']);
+
+// Face Sync
+Route::get('/face-list', [FaceController::class, 'list']);
+Route::get('/face-photo-download/{filename}', [FaceController::class, 'download']);
 
 // Scan Plat & Face Recognition
 Route::post('/scan-plat', [ScanPlatController::class, 'terima']);
