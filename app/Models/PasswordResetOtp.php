@@ -15,12 +15,6 @@ class PasswordResetOtp extends Model
 
     protected $casts = [
         'expired_at' => 'datetime',
-        'is_used'    => 'boolean',
+        'is_used' => 'boolean',
     ];
-
-    // Cek apakah OTP masih valid
-    public function isValid(): bool
-    {
-        return !$this->is_used && $this->expired_at->isFuture();
-    }
 }

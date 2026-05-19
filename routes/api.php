@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\VehicleController;
 use App\Http\Controllers\Api\ScanPlatController;
 use App\Http\Controllers\Api\ParkingRecordController;
+use App\Http\Controllers\Api\OtpController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,11 @@ use App\Http\Controllers\Api\ParkingRecordController;
 
 // Authentication
 Route::post('/login', [AuthController::class, 'login']);
+
+// OTP
+Route::post('/send-otp', [OtpController::class, 'sendOtp']);
+Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
+Route::post('/reset-password', [OtpController::class, 'resetPassword']);
 
 // Scan Plat & Face Recognition
 Route::post('/scan-plat', [ScanPlatController::class, 'terima']);
