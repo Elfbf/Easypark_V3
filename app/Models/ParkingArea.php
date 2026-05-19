@@ -14,7 +14,7 @@ class ParkingArea extends Model
         'code',
         'description',
         'capacity',
+        'available_count',
         'is_active',
     ];
-
 }

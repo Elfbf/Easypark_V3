@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->text('description')->nullable();
             $table->integer('capacity')->default(0);
+            $table->integer('available_count')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
