@@ -42,11 +42,11 @@ class OtpController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'otp'   => 'required|string|size:6',
+            'code'  => 'required|string|size:6',
         ]);
 
         $record = PasswordResetOtp::where('email', $request->email)
-            ->where('otp', $request->otp)
+            ->where('otp', $request->code)
             ->where('is_used', false)
             ->where('expired_at', '>', Carbon::now())
             ->first();
