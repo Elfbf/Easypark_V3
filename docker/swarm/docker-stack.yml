@@ -14,7 +14,7 @@ services:
         order: start-first
     volumes:
       - /var/www/easypark/.env:/var/www/html/.env
-      - storage_data:/var/www/html/storage
+      - /var/www/easypark/storage_shared:/var/www/html/storage
   nginx:
     image: nginx:alpine
     ports:
